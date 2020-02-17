@@ -5,7 +5,13 @@ function getRadius(x1, y1, x2, y2) {
 var canvas = new fabric.Canvas('canvas');
 
 //canvas.selection = false;
-
+var imageUrl = './images/background.jpg';
+canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
+    // Optionally add an opacity lvl to the image
+    backgroundImageOpacity: 0.5,
+    // should the image be resized to fit the container?
+    backgroundImageStretch: false
+});
 console.log(canvas.getWidth(), canvas.getHeight());
 var context = canvas.getContext("2d");
 console.log("Starting app.js ..... ");
@@ -14,10 +20,7 @@ console.log("Starting app.js ..... ");
 var startPosition, isDown, currentPositionX, currentPositionY, tool = 'select', savedData;
 var rect, circle;
 
-download_img = function(el) {
-    var image = canvas.toDataURL("image/jpg");
-    el.href = image;
-};
+
 
 function downloadCanvas() {
     var link = document.getElementById('download');
