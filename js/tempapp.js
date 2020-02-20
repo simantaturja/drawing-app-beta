@@ -5,10 +5,10 @@ function getRadius(x1, y1, x2, y2) {
 }
 
 var canvas = new fabric.Canvas('canvas');
-canvas.selection = false;
-canvas.preserveObjectStacking = true;
+
 var translation = new Translation(canvas);
 
+//canvas.selection = false;
 var imageUrl = './images/background.jpg';
 canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
     // Optionally add an opacity lvl to the image
@@ -24,58 +24,57 @@ console.log("Starting app.js ..... ");
 var startPosition, isDown, currentPositionX, currentPositionY, tool = 'select', savedData;
 var rect, circle;
 
+document.getElementById('open').addEventListener("change", function (e) {
+    var file = e.target.files[0];
+    var reader = new FileReader();
+    reader.onload = function (f) {
+        var data = f.target.result;
+        fabric.Image.fromURL(data, function (img) {
+            // add background image
+            /*canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                scaleX: canvas.width / img.width,
+                scaleY: canvas.height / img.height,
+                selectable: true
+            });*/
+            var img1 = img.set({ left: 0, top: 0 ,width:450,height:550});
+            canvas.add(img);
+            img.sendToBack();
+            img.selectable = false;
+        });
+    };
+    reader.readAsDataURL(file);
+    canvas.renderAll();
+    
+});
+
+document.getElementById('removebg').addEventListener("click", function (e) {
+    var objects = canvas.getObjects();
+    canvas.remove(objects[0]);
+
+
+});
+
 var download = document.querySelector('#download');
 download.addEventListener('click', function () {
-    processDownload();  //Original
-    translation.translateTop(); //Top
+    processDownload();
+    translation.translateRotateLeft();
+    processDownload();
+    translation.translateRotateRight();
+    translation.translateRotateRight();
+    processDownload();
+    translation.translateRotateLeft();
+    translation.translateTop();
     processDownload();
     translation.translateDown();
-    translation.translateDown();   // Down
-    processDownload();
-    translation.translateTop();
-    translation.translateLeft();    //Left
-    processDownload();
-    translation.translateRight();
-    translation.translateRight();   // Right
-    processDownload();
-    translation.translateLeft();
-
-    //Rotate Left and shift top down left right
-    translation.translateRotateLeft(); //Rotate Left
-    processDownload();
-    translation.translateTop(); //Top
-    processDownload();
     translation.translateDown();
-    translation.translateDown();   // Down
     processDownload();
     translation.translateTop();
-    translation.translateLeft();    //Left
+    translation.translateLeft();
     processDownload();
     translation.translateRight();
-    translation.translateRight();   // Right
-    processDownload();
-    translation.translateLeft();
-
-    translation.translateRotateRight(); //Rotate Right to get original image
-
-
-    //Rotate Right and shift left right top down
-    translation.translateRotateRight(); //Rotate Right
-    processDownload();
-    translation.translateTop(); //Top
-    processDownload();
-    translation.translateDown();
-    translation.translateDown();   // Down
-    processDownload();
-    translation.translateTop();
-    translation.translateLeft();    //Left
-    processDownload();
     translation.translateRight();
-    translation.translateRight();   // Right
     processDownload();
     translation.translateLeft();
-    translation.translateRotateLeft(); //Rotate Left to get original image
-
 });
 function processDownload() {
     var a = document.createElement('a');
@@ -84,15 +83,6 @@ function processDownload() {
     a.download = 'myimg.jpg';
     a.click();
 }
-
-
-// function downloadCanvas() {
-//     var link = document.getElementById('download');
-//   link.setAttribute('download', 'MintyPaper.png');
-//   link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
-//   link.click();
-// }
-
 $("#select").click(function () {
     mode = "select";
     canvas.selection = true;
@@ -101,41 +91,22 @@ $("#select").click(function () {
     canvas.renderAll();
 });
 
+$("#undo").click(function () {
+    console.log("flip");
+    canvas.forEachObject(function (event) {
+        event.set({
+            left: event.getScaledWidth
+        });
+        event.set('flipX', true);
+
+    });
+    canvas.renderAll();
+});
+
 $("#removeall").click(function () {
     canvas.clear();
 });
 
-
-$("#back").click(function () {
-    console.log('back button alert');
-    canvas.sendToBack(canvas.getActiveObject());
-    canvas.renderAll();
-});
-
-function openImage() {
-    document.getElementById('open').onchange = function handleImage(e) {
-        var reader = new FileReader();
-        reader.onload = function (event) {
-            var imgObj = new Image();
-            imgObj.src = event.target.result;
-            imgObj.onload = function () {
-                var image = new fabric.Image(imgObj);
-                image.set({
-                    angle: 0,
-                    padding: 10,
-                    cornersize: 10,
-
-                    selectable: false
-                });
-                canvas.centerObject(image);
-                canvas.add(image);
-                canvas.sendToBack(image);
-                canvas.renderAll();
-            }
-        }
-        reader.readAsDataURL(e.target.files[0]);
-    }
-}
 function deleteObjects() {
     canvas.remove(canvas.getActiveObject());
 }
@@ -166,6 +137,7 @@ canvas.on('mouse:down', function (event) {
                 selectable: false
             });
             canvas.add(rect);
+
         } else if (tool == 'circle') {
             circle = new fabric.Ellipse({
                 left: startPosition.x,
@@ -179,6 +151,7 @@ canvas.on('mouse:down', function (event) {
                 selectable: false
             });
             canvas.add(circle);
+            
         }
         canvas.renderAll();
     }
@@ -289,3 +262,4 @@ document.querySelectorAll("[data-command]").forEach(
         });
     }
 )
+
