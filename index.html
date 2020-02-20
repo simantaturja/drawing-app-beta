@@ -11,6 +11,8 @@
     <script defer src="js/fabric.min.js"></script>
     <script defer src="js/app.js" type="module"></script>
     <script src="js/filesaver.js"></script>
+    <script src = "js/jszip.min.js"></script>
+    <script src = "js/jszip-utils.js"></script>
 
 </head>
 
@@ -30,16 +32,17 @@
             <div class="item" data-tool="rectangle" title="Rectangle Tool">
                 <img src="images/rectangle.png" />
             </div>
-            <div class="item" data-tool="oval" title="Oval Tool">
-                <img src="images/oval.png" />
-            </div>
         </div>
         <div class="group commands">
-            <div class="item" data-command="undo" title="Undo">
-                <img src="images/undo.png" />
-            </div>
-            <div class="item" id="open" data-command="open" title="Open">
-                <input type="file" multiple="false" accept="image/*" id="finput" onchange="upload()">
+            
+            <div class="item image-upload" id="open" data-command="open" title="Open">
+                <label for="file-input">
+                    <img src="./images/open.png"/>
+                </label>
+            
+                <input id="file-input" type="file" onchange="upload()"/>
+            
+            
                 <script>
                     function upload() {
                         var can = document.getElementById('canvas');
@@ -51,7 +54,7 @@
                 </script>
             </div>
             <div class="item" id='download' data-command="download" title="Download">
-                <a id="download" download="myImage.jpg" type="button" href="" onclick="download_img(this);"><img
+                <a id="download" download type="button" href="" onclick="download_img(this);"><img
                         src="images/download.png" /></a>
                 <script>
                     download_img = function (el) {
@@ -60,9 +63,7 @@
                     };
                 </script>
             </div>
-            <div class="item" id='back' data-command="back" title="Back">
-                <img src="images/back.png" />
-            </div>
+            
             <div class="item" id='remove' data-command="remove" title="Remove">
                 <img src="images/remove.png" />
             </div>

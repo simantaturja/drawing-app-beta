@@ -22,7 +22,7 @@ console.log("Starting app.js ..... ");
 
 
 var startPosition, isDown, currentPositionX, currentPositionY, tool = 'select', savedData;
-var rect, circle;
+var rect, circle, triangle;
 
 var download = document.querySelector('#download');
 download.addEventListener('click', function () {
@@ -39,7 +39,7 @@ download.addEventListener('click', function () {
     translation.translateRight();   // Right
     processDownload();
     translation.translateLeft();
-
+    
     //Rotate Left and shift top down left right
     translation.translateRotateLeft(); //Rotate Left
     processDownload();
@@ -58,7 +58,6 @@ download.addEventListener('click', function () {
 
     translation.translateRotateRight(); //Rotate Right to get original image
 
-
     //Rotate Right and shift left right top down
     translation.translateRotateRight(); //Rotate Right
     processDownload();
@@ -75,23 +74,40 @@ download.addEventListener('click', function () {
     processDownload();
     translation.translateLeft();
     translation.translateRotateLeft(); //Rotate Left to get original image
-
+    //doneDownload();
+    zipDownloads();
 });
+var links = [];
 function processDownload() {
     var a = document.createElement('a');
     document.body.appendChild(a);
-    a.href = canvas.toDataURL();
+    a.href = canvas.toDataURL("image/png");
     a.download = 'myimg.jpg';
-    a.click();
+    links.push(a.href.replace(/^data:image\/(png|jpg);base64,/, ""));
+    //links.push(a.href);
+    //console.log(a.href);
+    //a.click();
+    document.body.removeChild(a);
+}
+function zipDownloads() {
+    var zip = new JSZip();
+    zip.file("Hello.html", "Hello World\n");
+    zip.folder("images");
+    var img = zip.folder("images");
+    var ind = 1;
+    console.log(links.length);
+    for ( var i = 0; i < links.length; i++){
+        console.log('hello bangladesh');
+        img.file('mmp'+ind.toString()+'.jpg', links[i], {base64: true});
+        console.log(ind);
+        ind += 1;
+    }
+    zip.generateAsync({ type: "blob" }).then(function (content) {
+        content.download = 'download';
+        saveAs(content, "mmd1.zip");
+    });
 }
 
-
-// function downloadCanvas() {
-//     var link = document.getElementById('download');
-//   link.setAttribute('download', 'MintyPaper.png');
-//   link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
-//   link.click();
-// }
 
 $("#select").click(function () {
     mode = "select";
@@ -103,6 +119,19 @@ $("#select").click(function () {
 
 $("#removeall").click(function () {
     canvas.clear();
+    var imageUrl = './images/background.jpg';
+    canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
+        // Optionally add an opacity lvl to the image
+        backgroundImageOpacity: 0.5,
+        // should the image be resized to fit the container?
+        backgroundImageStretch: false
+    });
+    //document.getElementById("inpform").reset();
+    var inputArray = document.querySelectorAll('input');
+    inputArray.forEach(function (input) {
+        input.value = "";
+    });
+
 });
 
 
@@ -179,6 +208,19 @@ canvas.on('mouse:down', function (event) {
                 selectable: false
             });
             canvas.add(circle);
+        } else if (tool == 'triangle') {
+            triangle = new fabric.Triangle({
+                left: startPosition.x,
+                top: startPosition.y,
+                originX: 'left',
+                originY: 'top',
+                stroke: 'black',
+                width: 2,
+                height: 2,
+                fill: 'rgba(0,0,0,0)',
+                selectable: false
+            });
+            canvas.add(triangle);
         }
         canvas.renderAll();
     }
@@ -231,6 +273,9 @@ canvas.on('mouse:move', function (event) {
                 ry: Math.abs(startPosition.y - pointer.y) / 2
             });
             circle.setCoords();
+        } else if (tool == 'triangle') {
+            triangle.set({ width: Math.abs(startPosition.x - pointer.x), height: Math.abs(startPosition.y - pointer.y) });
+            triangle.setCoords();
         }
         canvas.renderAll();
 
