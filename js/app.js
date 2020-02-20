@@ -81,7 +81,7 @@ var links = [];
 function processDownload() {
     var a = document.createElement('a');
     document.body.appendChild(a);
-    a.href = canvas.toDataURL("image/png");
+    a.href = canvas.toDataURL("image/jpg");
     a.download = 'myimg.jpg';
     links.push(a.href.replace(/^data:image\/(png|jpg);base64,/, ""));
     //links.push(a.href);
@@ -91,8 +91,7 @@ function processDownload() {
 }
 function zipDownloads() {
     var zip = new JSZip();
-    zip.file("Hello.html", "Hello World\n");
-    zip.folder("images");
+    //zip.folder("images");
     var img = zip.folder("images");
     var ind = 1;
     console.log(links.length);
