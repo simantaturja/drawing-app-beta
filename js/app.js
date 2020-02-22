@@ -287,24 +287,24 @@ canvas.on('mouse:up', function (event) {
 
 canvas.on('object:added', function () {
     if (!isRedoing) {
-        h = [];
+        stackBox = [];
     }
     isRedoing = false;
 });
 
 var isRedoing = false;
-var h = [];
+var stackBox = [];
 $('#undo').click(function (event) {
     console.log("hello undo");
     if (canvas._objects.length > 0) {
-        h.push(canvas._objects.pop());
+        stackBox.push(canvas._objects.pop());
         canvas.renderAll();
     }
 });
 $('#redo').click(function (event) {
-    if (h.length > 0) {
+    if (stackBox.length > 0) {
         isRedoing = true;
-        canvas.add(h.pop());
+        canvas.add(stackBox.pop());
     }
 });
 
