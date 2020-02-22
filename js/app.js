@@ -1,8 +1,8 @@
 import Translation from './translation.class.js';
 
-function getRadius(x1, y1, x2, y2) {
-    return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-}
+
+
+
 
 var canvas = new fabric.Canvas('canvas');
 canvas.selection = false;
@@ -39,7 +39,7 @@ download.addEventListener('click', function () {
     translation.translateRight();   // Right
     processDownload();
     translation.translateLeft();
-    
+
     //Rotate Left and shift top down left right
     translation.translateRotateLeft(); //Rotate Left
     processDownload();
@@ -95,9 +95,9 @@ function zipDownloads() {
     var img = zip.folder("images");
     var ind = 1;
     console.log(links.length);
-    for ( var i = 0; i < links.length; i++){
+    for (var i = 0; i < links.length; i++) {
         console.log('hello bangladesh');
-        img.file('mmp'+ind.toString()+'.jpg', links[i], {base64: true});
+        img.file('mmp' + ind.toString() + '.jpg', links[i], { base64: true });
         console.log(ind);
         ind += 1;
     }
@@ -285,6 +285,30 @@ canvas.on('mouse:up', function (event) {
     isDown = false;
 });
 
+canvas.on('object:added', function () {
+    if (!isRedoing) {
+        h = [];
+    }
+    isRedoing = false;
+});
+
+var isRedoing = false;
+var h = [];
+$('#undo').click(function (event) {
+    console.log("hello undo");
+    if (canvas._objects.length > 0) {
+        h.push(canvas._objects.pop());
+        canvas.renderAll();
+    }
+});
+$('#redo').click(function (event) {
+    if (h.length > 0) {
+        isRedoing = true;
+        canvas.add(h.pop());
+    }
+});
+
+
 document.querySelectorAll("[data-tool]").forEach(
     item => {
         item.addEventListener("click", e => {
@@ -295,6 +319,7 @@ document.querySelectorAll("[data-tool]").forEach(
             let selectedTool = item.getAttribute("data-tool");
             console.log("From app js ", selectedTool);
             tool = selectedTool;
+
             if (tool != 'select') {
                 canvas.selection = false;
                 canvas.forEachObject(function (event) {
