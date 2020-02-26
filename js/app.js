@@ -105,6 +105,7 @@ function zipDownloads() {
         content.download = 'download';
         saveAs(content, "mmd1.zip");
     });
+    links = [];
 }
 
 
