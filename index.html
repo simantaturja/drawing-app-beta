@@ -11,6 +11,7 @@
     <script defer src="js/fabric.min.js"></script>
     <script defer src="js/app.js" type="module"></script>
     <script src="js/filesaver.js"></script>
+    <script src="js/SimpleImage.js"></script>
     <script src="js/jszip.min.js"></script>
     <script src="js/jszip-utils.js"></script>
 
@@ -41,23 +42,17 @@
             <div class="item" id='redo' data-command="redo" title="Redo">
                 <img src = "images/redo.png"/>
             </div>
-            
+
             <div class="item image-upload" id="open" data-command="open" title="Open">
                 <label for="file-input">
                     <img src="./images/open.png" />
                 </label>
 
-                <input id="file-input" type="file" onchange="upload()" />
+                <input id="file-input" type="file"/>
 
 
                 <script>
-                    function upload() {
-                        var can = document.getElementById('canvas');
-                        var fileInput = document.getElementById("finput");
-                        console.log(fileInput);
-                        var image = new SimpleImage(fileInput);
-                        image.drawTo(can);
-                    }
+                    
                 </script>
             </div>
             <div class="item" id='download' data-command="download" title="Download">

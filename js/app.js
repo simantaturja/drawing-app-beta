@@ -22,10 +22,12 @@ console.log("Starting app.js ..... ");
 
 
 var startPosition, isDown, currentPositionX, currentPositionY, tool = 'select', savedData;
-var rect, circle, triangle;
-
+var rect, circle, triangle, imageOpen;
+var imageArray = [];
 var download = document.querySelector('#download');
 download.addEventListener('click', function () {
+    originalImageDownload();
+    zip2Downloads();
     processDownload();  //Original
     translation.translateTop(); //Top
     processDownload();
@@ -83,12 +85,16 @@ function processDownload() {
     document.body.appendChild(a);
     a.href = canvas.toDataURL("image/jpg");
     a.download = 'myimg.jpg';
+    console.log(a.href);
     links.push(a.href.replace(/^data:image\/(png|jpg);base64,/, ""));
+
     //links.push(a.href);
     //console.log(a.href);
     //a.click();
     document.body.removeChild(a);
+
 }
+
 function zipDownloads() {
     var zip = new JSZip();
     //zip.folder("images");
@@ -141,6 +147,52 @@ $("#back").click(function () {
     canvas.renderAll();
 });
 
+$("#open").click(function () {
+    var imageLoader = document.getElementById('file-input');
+    imageLoader.addEventListener('change', handleImage, false);
+    // var fileInput = document.getElementById("file-input");
+    // console.log('hello world12');
+    // console.log(fileInput);
+
+
+    // imageOpen = new SimpleImage(fileInput);
+    // console.log(imageOpen);
+    // //context.drawImage(imageOpen, 0, 0);
+    // imageOpen.drawTo(canvas);
+
+    // console.log(typeof imageOpen);
+});
+
+function originalImageDownload() {
+        
+    
+}
+function handleImage(e) {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+        var img = new Image();
+        console.log('resultttt');
+        console.log(reader.result);
+        context.drawImage(img, 0, 0);
+        var a = document.createElement('a');
+        document.body.appendChild(a);
+        a.href = reader.result;//canvas.toDataURL("image/jpg");
+        a.download = 'myimg.jpg';
+        console.log(a.href);
+        imageArray.push(a.href.replace(/^data:image\/(png|jpg|jpeg);base64,/, ""));
+        //imageArray.push(reader.result.replace(/^data:image\/(png|jpg);base64,/, ""));
+        img.src = event.target.result;
+        //document.body.removeChild(a);
+    }
+    reader.readAsDataURL(e.target.files[0]);
+    console.log(reader);
+    
+        //links.push(a.href);
+        //console.log(a.href);
+        //a.click();
+        //document.body.removeChild(a);
+    //console.log(reader.result);
+}
 function openImage() {
     document.getElementById('open').onchange = function handleImage(e) {
         var reader = new FileReader();
@@ -307,8 +359,26 @@ $('#redo').click(function (event) {
         isRedoing = true;
         canvas.add(stackBox.pop());
     }
+    
 });
 
+function zip2Downloads() {
+    var zip = new JSZip();
+    var img = zip.folder("images");
+    var ind = 1;
+    console.log(imageArray.length);
+    for (var i = 0; i < 15; i++) {
+        console.log('hello bangladesh');
+        img.file('mmp' + ind.toString() + '.jpg', imageArray[0], { base64: true });
+        console.log(ind);
+        ind += 1;
+    }
+    zip.generateAsync({ type: "blob" }).then(function (content) {
+        content.download = 'download';
+        saveAs(content, "original_mmd1.zip");
+    });
+    imageArray = [];
+}
 
 document.querySelectorAll("[data-tool]").forEach(
     item => {
